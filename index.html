@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TODOS APP</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>Todos Application with server</h1>
+    <form onsubmit="PostTodos(); return false">
+      ToDos Items<input
+        type="text"
+        id="todo"
+        placeholder="Enter your To Do Items"
+        required
+      />
+      <button type="submit">Add</button>
+    </form>
+    <button onclick="getAllTodo()">Refresh</button>
+    <h3 id="result"></h3>
+    <h5 id="message"></h5>
+    <script>
+      function PostTodos() {
+        let todoText = document.querySelector("#todo").value
+        axios.post(`http://localhost:3000/todo`,{ text:todoText })
+          .then((response) =>{
+            console.log(' POST response---->',response.data.data);
+            getAllTodo();
+            document.querySelector("#message").innerHTML = response.data.
+            setTimeout(() => {
+              document.querySelector("#message").innerHTML =" ";
+            }, 2000);
+
+
+            document.querySelector("#result").innerHTML = " ";
+            response.data.data.map((res) => {
+              document.querySelector("#result").innerHTML += res;
+              document.querySelector("#result").innerHTML += "<br>";
+            });
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      function getAllTodo() {
+        axios
+          .get(`http://localhost:3000/todos`)
+          .then((response)=> {
+            console.log('response--Get-->',response.data);
+
+            document.querySelector("#result").innerHTML = " ";
+
+            response.data.data.map((res) => {
+              console.log('response--Get-->',res);
+              document.querySelector("#result").innerHTML += res;
+              document.querySelector("#result").innerHTML += "<br>";
+            });
+          })
+          .catch( (error)=> { console.log(error); });
+      }
+
+      setInterval(getAllTodo(), 500);
+    </script>
+  </body>
+</html>
